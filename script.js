@@ -1,3 +1,5 @@
+
+
 const display = document.querySelector("#display");
 const buttons = document.querySelectorAll("button");
 
@@ -21,6 +23,49 @@ buttons.forEach((item) => {
       display.innerText += item.id;
     }
   };
+});
+
+document.addEventListener("keydown", function(event) {
+  if (event.key >= 0 && event.key <= 9) {
+    display.innerText += event.key;
+  }
+  else if (event.key == ".") {
+    display.innerText += ".";
+  }
+  else if (event.key == ",") {
+    display.innerText += ",";
+  }
+  else if (event.key == "(") {
+    display.innerText += "(";
+  }
+  else if (event.key == ")") {
+    display.innerText += ")";
+  }
+  else if (event.key == "/") {
+    display.innerText += "/";
+  }
+  else if (event.key == "*") {
+    display.innerText += "*";
+  }
+  else if (event.key == "-") {
+    display.innerText += "-";
+  }
+  else if (event.key == "+") {
+    display.innerText += "+";
+  }
+  else if (event.key == "Enter") {
+    if (display.innerText != "") {
+      display.innerText = eval(display.innerText);
+    }
+    else if (display.innerText == "") {
+      display.innerText = "Empty!";
+      setTimeout(() => (display.innerText = ""), 2000);
+    }
+  }
+  else if (event.key == "Backspace") {
+    let string = display.innerText.toString();
+    display.innerText = string.substr(0, string.length - 1);
+  }
 });
 
 const themeToggleBtn = document.querySelector(".theme-toggler");
