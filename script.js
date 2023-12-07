@@ -1,10 +1,26 @@
-
-
 const display = document.querySelector("#display");
 const buttons = document.querySelectorAll("button");
+const CLEAR_DISPLAY_TIMEOUT = 2000;
+const ERROR_DISPLAY_TIMEOUT = 3000;
+
+function safeEval(str) {
+  try {
+    return eval(str);
+  } catch (e) {
+    setTimeout(() => {
+      if (display.innerText === "Erro!") {
+        display.innerText = "";
+      }
+    }, ERROR_DISPLAY_TIMEOUT);
+    return "Erro!";
+  }
+}
 
 buttons.forEach((item) => {
-  item.onclick = () => {
+  item.addEventListener('click', () => {
+    if (display.innerText === "Erro!") {
+      display.innerText = "";
+    }
     if (item.id == "clear") {
       display.innerText = "";
     }
@@ -13,19 +29,23 @@ buttons.forEach((item) => {
       display.innerText = string.substr(0, string.length - 1);
     }
     else if (display.innerText != "" && item.id == "equal") {
-      display.innerText = eval(display.innerText);
+      display.innerText = safeEval(display.innerText);
     }
     else if (display.innerText == "" && item.id == "equal") {
       display.innerText = "Empty!";
-      setTimeout(() => (display.innerText = ""), 2000);
+      setTimeout(() => (display.innerText = ""), CLEAR_DISPLAY_TIMEOUT);
     }
     else {
       display.innerText += item.id;
     }
-  };
+  });
 });
 
 document.addEventListener("keydown", function(event) {
+  event.preventDefault();
+  if (display.innerText === "Erro!") {
+    display.innerText = "";
+  }
   if (event.key >= 0 && event.key <= 9) {
     display.innerText += event.key;
   }
@@ -55,11 +75,11 @@ document.addEventListener("keydown", function(event) {
   }
   else if (event.key == "Enter") {
     if (display.innerText != "") {
-      display.innerText = eval(display.innerText);
+      display.innerText = safeEval(display.innerText);
     }
     else if (display.innerText == "") {
       display.innerText = "Empty!";
-      setTimeout(() => (display.innerText = ""), 2000);
+      setTimeout(() => (display.innerText = ""), CLEAR_DISPLAY_TIMEOUT);
     }
   }
   else if (event.key == "Backspace") {
@@ -74,8 +94,17 @@ const toggleIcon = document.querySelector(".toggler-icon");
 
 let isDark = true;
 
-themeToggleBtn.onclick = () => {
+themeToggleBtn.addEventListener('click', () => {
   calculator.classList.toggle("dark");
   themeToggleBtn.classList.toggle("active");
   isDark = !isDark;
+  localStorage.setItem('isDark', isDark);
+});
+
+window.onload = () => {
+  isDark = localStorage.getItem('isDark') === 'true';
+  if (isDark) {
+    calculator.classList.add("dark");
+    themeToggleBtn.classList.add("active");
+  }
 };
